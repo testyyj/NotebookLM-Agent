@@ -1,0 +1,3 @@
+nbagent/cli.py:15:1: F401 'rich.syntax.Syntax' imported but unused
+nbagent/cli.py:185:25: W503 line break before binary operator
+nbagent/cli.py:196:25: W503 line break before binary operator

@@ -1,0 +1,13 @@
+nbagent/config.py:9: error: Library stubs not installed for "yaml"  [import-untyped]
+nbagent/config.py:9: note: Hint: "python3 -m pip install types-PyYAML"
+nbagent/config.py:9: note: (or run "mypy --install-types" to install all missing stub packages)
+nbagent/skills/base.py:10: error: Skipping analyzing "notebooklm": module is installed, but missing library stubs or py.typed marker  [import-untyped]
+nbagent/skills/base.py:10: note: See https://mypy.readthedocs.io/en/stable/running_mypy.html#missing-imports
+nbagent/agent.py:11: error: Skipping analyzing "notebooklm": module is installed, but missing library stubs or py.typed marker  [import-untyped]
+nbagent/agent.py:63: error: Cannot instantiate abstract class "BaseSkill" with abstract attribute "execute"  [abstract]
+nbagent/agent.py:160: error: Module has no attribute "util"  [attr-defined]
+nbagent/agent.py:162: error: Module has no attribute "util"  [attr-defined]
+nbagent/cli.py:175: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+nbagent/cli.py:269: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+nbagent/cli.py:408: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+Found 6 errors in 3 files (checked 13 source files)

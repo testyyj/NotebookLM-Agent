@@ -1,207 +1,103 @@
 # 🤖 NotebookLM Agent
 
-> 可扩展 Skill 的命令行 Agent — 无需打开网页，直接在终端操作 NotebookLM
+> 操作 NotebookLM 的终极全能工具包 — 包含 **[Chrome 浏览器扩展](#1-chrome-浏览器扩展-推荐)** 与 **[Python 命令行工具 (nbagent)](#2-python-命令行工具-nbagent)**。
 
-基于 [`notebooklm-py`](https://github.com/teng-lin/notebooklm-py) 非官方 SDK，通过可插拔的 **Skill 系统** 封装所有 NotebookLM 功能。
-
----
-
-## 📋 环境要求
-
-| 依赖 | 版本 | 说明 |
-|------|------|------|
-| **Python** | ≥ 3.10 | 使用了 `match` 语句（macOS 自带 3.9 不够） |
-| **pip** | ≥ 22.0 | 需要支持 pyproject.toml 构建 |
-| **Google 账号** | — | 需要已开通 NotebookLM 的 Google 账号 |
-| **Homebrew**（macOS） | — | 用于安装 Python（如系统版本不够） |
+本项目提供了两种方式来灵活操作和扩展 Google NotebookLM 的功能，提升你的生产力：
+1. **[Chrome 浏览器扩展](#1-chrome-浏览器扩展-推荐)**：直接在浏览器中侧边栏管理笔记本、数据源、对话，并支持一键生成播客、发布 RSS 和频道管理。
+2. **[Python 命令行工具 (nbagent)](#2-python-命令行工具-nbagent)**：基于非官方 SDK 的自动化脚本，支持通过命令行与 NotebookLM 交互，以及自定义 Skill 系统。
 
 ---
 
-## 🚀 新用户快速配置（3 步上手）
+## 1. Chrome 浏览器扩展 (推荐)
 
-### 第 1 步：安装 Python 3.10+
+这是一个强大的 Chrome 扩展程序，可在浏览器中直接管理你的 NotebookLM 数据，无需来回切换页面。版本：`v0.4.0`
 
-如果你的 Python 版本低于 3.10，需要先升级：
+### ✨ 核心功能
+*   **笔记本与数据源操作**：直接在侧边栏创建新笔记本，添加网页、文件、YouTube 链接等作为数据源。
+*   **RAG 问答与对话**：内置独立聊天窗口，快捷向当前笔记本提问。
+*   **播客生成与发布系统**：
+    *   **一键生成播客**：基于你的数据源自动生成并下载相关音频（Deep Dive / Podcast）。
+    *   **频道管理与 RSS 发布**：自动将生成的播客整理成专辑，支持自定义频道封面、管理剧集列表，并生成兼容 Apple Podcasts 的标准序列化 RSS Feed 以供直接订阅！
+*   **制品管理 (Artifacts)**：方便地查看和管理所有生成的内容及关联数据源。
+
+### 📦 安装方法 (开发者模式)
+
+1. 下载或克隆本项目：
+   ```bash
+   git clone https://github.com/your-username/NotebookLM-Agent.git
+   ```
+2. 打开 Chrome 浏览器，访问 `chrome://extensions/`。
+3. 开启右上角的 **开发者模式** (Developer mode)。
+4. 点击 **加载已解压的扩展程序** (Load unpacked)。
+5. 在弹出的文件选择窗口中，选择项目内的 `chrome-extension` 文件夹（**必选选到此层级**）。
+6. 安装成功！扩展图标将出现在浏览器右上角，点击即可使用。
+
+---
+
+## 2. Python 命令行工具 (nbagent)
+
+基于 [`notebooklm-py`](https://github.com/teng-lin/notebooklm-py) 封装的 CLI Agent，旨在为无需打开网页的终端死忠粉提供自动化能力。
+
+### 📋 环境要求
+*   **Python** ≥ 3.10
+*   已开通 NotebookLM 的 **Google 账号**
+
+### 🚀 快速上手
+
+#### 安装
 
 ```bash
-# 检查当前版本
-python3 --version
+cd nbagent所在的目录  # /path/to/NotebookLM
 
-# macOS 用户：通过 Homebrew 安装
-brew install python@3.12
-
-# 验证安装
-/opt/homebrew/bin/python3.12 --version
-```
-
-> 💡 也可以使用 [pyenv](https://github.com/pyenv/pyenv) 管理多版本 Python。
-
-### 第 2 步：创建虚拟环境并安装
-
-```bash
-# 进入项目目录
-cd /path/to/NotebookLM
-
-# 创建虚拟环境
-/opt/homebrew/bin/python3.12 -m venv .venv
-
-# 激活虚拟环境
+# 推荐使用虚拟环境
+python3 -m venv .venv
 source .venv/bin/activate
 
-# 升级构建工具
+# 安装 nbagent 与依赖
 pip install --upgrade pip setuptools wheel hatchling editables
-
-# 安装 nbagent（开发模式）
 pip install --no-build-isolation -e "."
-
-# 安装浏览器引擎（登录时需要）
 playwright install chromium
 ```
 
-### 第 3 步：登录 Google 账号
-
+#### 登录认证
+首次使用需通过浏览器登录 Google 账号以获取授权信息：
 ```bash
-# 激活虚拟环境（如果还没有）
-source .venv/bin/activate
-
-# 首次登录（会打开浏览器窗口）
 nbagent login
+# 流程：浏览器自动打开主页 -> 登录你的 Google 账号 -> 等待 NotebookLM 页面加载完成 -> 返回终端按 Enter 确认。
+# 之后的操作将不再需要打开浏览器！
 ```
 
-浏览器会自动打开，流程如下：
-1. 在浏览器中完成 Google 账号登录
-2. **等到看到 NotebookLM 主页**（显示笔记本列表）
-3. 回到终端按 **Enter** 键确认
+### ✨ 命令使用示例
 
-> ⚠️ 确保浏览器已完全加载到 `notebooklm.google.com` 主页面再按 Enter，否则 cookie 可能不完整。
-
-登录成功后，认证信息保存在 `~/.notebooklm/storage_state.json`，后续所有操作**不再需要浏览器**。
-
-### 验证安装
-
-```bash
-# 列出笔记本
-nbagent run notebook list
-
-# 查看所有 Skill
-nbagent skills
-```
-
----
-
-## ✨ 功能
-
-| Skill | 功能 |
-|-------|------|
-| **notebook** | 笔记本管理 — 创建 / 列出 / 删除 / 重命名 / 摘要 |
-| **source** | 数据源管理 — 添加 URL / 文件 / YouTube / 文本 / 刷新 |
-| **chat** | RAG 对话 — 基于数据源问答 + 引用来源 |
-| **generate** | 内容生成 — 播客 / 视频 / Quiz / 闪卡 / 报告 / 幻灯片 / 思维导图 |
-| **research** | 自动研究 — Web / Drive 搜索 + 自动导入数据源 |
-| **download** | 制品下载 — MP3 / MP4 / PDF / JSON / CSV / Markdown |
-
-**🔌 自定义 Skill**：支持从任意目录加载，使用 `--skills-dir` 参数或配置 `custom_skills_dir`。
-
----
-
-## � 使用示例
-
-```bash
-# 每次使用前先激活虚拟环境
-source .venv/bin/activate
-
-# ═══════════════════════════════════════
-# 笔记本管理
-# ═══════════════════════════════════════
-nbagent run notebook list                          # 列出所有笔记本
-nbagent run notebook create "My Research"          # 创建新笔记本
-nbagent use <notebook_id>                          # 设置当前活动笔记本
-
-# ═══════════════════════════════════════
-# 数据源管理（需要先 use 一个笔记本）
-# ═══════════════════════════════════════
-nbagent run source add-url "https://example.com"   # 添加网页
-nbagent run source add-file "./paper.pdf"          # 添加本地文件
-nbagent run source add-youtube "https://youtube.com/watch?v=..."
-nbagent run source list                            # 列出数据源
-
-# ═══════════════════════════════════════
-# 对话问答
-# ═══════════════════════════════════════
-nbagent ask "这篇文章的核心观点是什么？"            # 快捷提问
-nbagent run chat ask "详细解释第三章"               # 完整命令
-
-# ═══════════════════════════════════════
-# 内容生成
-# ═══════════════════════════════════════
-nbagent run generate audio                         # 生成播客
-nbagent run generate quiz                          # 生成测验
-nbagent run generate mind-map                      # 生成思维导图
-
-# ═══════════════════════════════════════
-# 下载制品
-# ═══════════════════════════════════════
-nbagent run download audio ./podcast.mp3
-nbagent run download quiz ./quiz.json
-
-# ═══════════════════════════════════════
-# 自动研究
-# ═══════════════════════════════════════
-nbagent run research run "AI agents latest"        # 一键搜索+导入
-
-# ═══════════════════════════════════════
-# 从外部目录加载自定义 Skill
-# ═══════════════════════════════════════
-nbagent --skills-dir /path/to/my/skills run my-skill do-something
-
-# ═══════════════════════════════════════
-# 配置管理
-# ═══════════════════════════════════════
-nbagent config show
-nbagent config set custom_skills_dir /path/to/skills
-```
-
-### 交互式 REPL
-
+**交互式 REPL：**
 ```bash
 nbagent interactive
-
-# 在 REPL 中：
-# nbagent> notebook list
-# nbagent> ask 这是什么？
-# nbagent> skills
-# nbagent> help source
-# nbagent> quit
 ```
 
----
+**命令行直调：**
+```bash
+# 笔记本管理
+nbagent run notebook list
+nbagent run notebook create "My Research"
 
-## 🔌 编写自定义 Skill
+# 数据源管理
+nbagent run source add-url "https://example.com"
+nbagent run source add-file "./paper.pdf"
 
-在 `custom_skills/` 目录（或任意 `--skills-dir` 指定目录）中创建 Python 文件：
+# 内容生成与下载
+nbagent run generate audio
+nbagent run download audio ./podcast.mp3
 
-```python
-from nbagent.skills.base import ActionInfo, BaseSkill
-
-class MySkill(BaseSkill):
-    name = "my-skill"
-    description = "我的自定义 Skill"
-    _actions = {
-        "do-something": ActionInfo("do-something", "执行操作", {"param": "参数说明"}),
-    }
-
-    async def execute(self, action, **kwargs):
-        match action:
-            case "do-something":
-                # 使用 self.client 访问 NotebookLM API
-                notebooks = await self.client.notebooks.list()
-                return {"count": len(notebooks)}
+# 自动研究
+nbagent run research run "AI agents latest"
 ```
 
-Agent 启动时会自动发现并加载。Skill 搜索目录优先级：
-1. 配置文件中的 `custom_skills_dir`
-2. 项目根目录的 `custom_skills/`
-3. CLI `--skills-dir` 参数
+### 🔌 扩展自定义 Skill
+你可以编写自己的 Python Skill，并在运行时通过 `--skills-dir` 或配置文件 `custom_skills_dir` 挂载：
+```bash
+nbagent --skills-dir /path/to/my/skills run my-skill do-something
+```
+有关自行编写 Skill 的详细示例，请参考 `custom_skills/example_skill.py`（如果有）以及 `nbagent/skills/base.py`。
 
 ---
 
@@ -209,29 +105,22 @@ Agent 启动时会自动发现并加载。Skill 搜索目录优先级：
 
 ```
 NotebookLM/
-├── pyproject.toml           # 依赖 & CLI 入口
-├── nbagent/
-│   ├── cli.py               # Click CLI + Rich 输出
-│   ├── agent.py             # Agent 核心 (Skill 注册/调度)
-│   ├── config.py            # ~/.nbagent/config.yaml
-│   └── skills/
-│       ├── base.py          # Skill 抽象基类
-│       ├── notebook.py      # 笔记本管理
-│       ├── source.py        # 数据源管理
-│       ├── chat.py          # RAG 对话
-│       ├── generate.py      # 内容生成
-│       ├── research.py      # 自动研究
-│       └── download.py      # 制品下载
-└── custom_skills/           # 自定义 Skill（自动加载）
-    └── example_skill.py
+├── chrome-extension/        # Chrome 浏览器扩展核心代码（包含可视化UI、播客与频道管理）
+│   ├── manifest.json
+│   ├── page.html / page.js  # 扩展主页面
+│   ├── popup.html           # 扩展弹窗页面
+│   └── podcast/             # 播客面板与相关生成逻辑
+├── pyproject.toml           # Python CLI 的项目配置
+├── nbagent/                 # Python 命令行工具源码
+│   ├── cli.py               # Click 入口
+│   └── skills/              # 内置命令行技能 (notebook, source, generate 等)
+└── custom_skills/           # （可选）用户放置的 Python 自定义技能目录
 ```
 
 ## ⚠️ 注意事项
 
-- 底层使用 **未公开的 Google API**，可能随时变化
-- 适合个人使用和原型开发，不建议用于生产环境
-- 登录 token 保存在 `~/.notebooklm/storage_state.json`
-- Agent 配置保存在 `~/.nbagent/config.yaml`
+* 本项目使用的接口大多为非公开的 Google API，若 NotebookLM 服务发生变更，部分功能可能失效。
+* 请勿在生产环境中高频次、大批量请求，以免触发 Google 账号的安全策略拦截。
 
 ## License
 
