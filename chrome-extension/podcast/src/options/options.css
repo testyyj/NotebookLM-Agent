@@ -1,0 +1,554 @@
+@import "tailwindcss";
+
+/* ═══════════════════════════
+   Design Tokens
+   ═══════════════════════════ */
+:root {
+    --accent: #7c5cfc;
+    --accent-hover: #9b82ff;
+    --accent-glow: rgba(124, 92, 252, 0.25);
+    --success: #34d399;
+    --danger: #f87171;
+    --bg-card: rgba(255, 255, 255, 0.04);
+    --border: rgba(255, 255, 255, 0.08);
+    --radius: 12px;
+}
+
+/* ═══════════════════════════
+   Card
+   ═══════════════════════════ */
+.card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+}
+
+.card-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+/* ═══════════════════════════
+   Form Fields
+   ═══════════════════════════ */
+.field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: #a1a1aa;
+    margin-bottom: 4px;
+}
+
+.field input,
+.field textarea,
+.field select {
+    width: 100%;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: #e4e4e7;
+    font-size: 13px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.field input:focus,
+.field textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+.field input::placeholder,
+.field textarea::placeholder {
+    color: #52525b;
+}
+
+.file-input {
+    padding: 6px !important;
+    font-size: 12px !important;
+    cursor: pointer;
+}
+
+/* ═══════════════════════════
+   Cover Preview (Edit Dialog)
+   ═══════════════════════════ */
+.cover-preview {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    margin-bottom: 8px;
+}
+
+.cover-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.cover-preview-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.cover-preview:hover .cover-preview-overlay {
+    opacity: 1;
+}
+
+.cover-preview-overlay span {
+    color: #e4e4e7;
+    font-size: 10px;
+    text-align: center;
+    padding: 6px;
+    line-height: 1.4;
+}
+
+.cover-regen-option {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    color: #a1a1aa;
+    transition: color 0.15s;
+}
+
+.cover-regen-option:hover {
+    color: #e4e4e7;
+}
+
+.cover-regen-option input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    accent-color: var(--accent);
+    cursor: pointer;
+}
+
+/* ═══════════════════════════
+   Buttons
+   ═══════════════════════════ */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: var(--accent-hover);
+}
+
+.btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-ghost {
+    background: transparent;
+    color: #a1a1aa;
+    border: 1px solid var(--border);
+}
+
+.btn-ghost:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: #e4e4e7;
+}
+
+.btn-sm {
+    padding: 5px 12px;
+    font-size: 12px;
+}
+
+.btn-danger {
+    background: rgba(248, 113, 113, 0.12);
+    color: var(--danger);
+    border: 1px solid rgba(248, 113, 113, 0.2);
+}
+
+.btn-danger:hover {
+    background: rgba(248, 113, 113, 0.25);
+}
+
+/* ═══════════════════════════
+   Status Message
+   ═══════════════════════════ */
+.status-msg {
+    font-size: 12px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-top: 12px;
+}
+
+.status-msg.success {
+    background: rgba(52, 211, 153, 0.1);
+    color: var(--success);
+    border: 1px solid rgba(52, 211, 153, 0.2);
+}
+
+.status-msg.error {
+    background: rgba(248, 113, 113, 0.1);
+    color: var(--danger);
+    border: 1px solid rgba(248, 113, 113, 0.2);
+}
+
+.status-msg.info {
+    background: rgba(124, 92, 252, 0.1);
+    color: var(--accent-hover);
+    border: 1px solid rgba(124, 92, 252, 0.2);
+}
+
+/* ═══════════════════════════
+   Channel Card
+   ═══════════════════════════ */
+.channel-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.channel-card:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+.channel-cover {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: rgba(255, 255, 255, 0.06);
+    flex-shrink: 0;
+}
+
+.channel-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.channel-name {
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.channel-meta {
+    font-size: 11px;
+    color: #71717a;
+    margin-top: 2px;
+    display: flex;
+    gap: 10px;
+}
+
+.channel-meta code {
+    font-size: 10px;
+    color: #52525b;
+    background: rgba(255, 255, 255, 0.06);
+    padding: 1px 5px;
+    border-radius: 3px;
+}
+
+.channel-tip {
+    font-size: 10px;
+    color: #a78bfa;
+    margin-top: 4px;
+    opacity: 0.75;
+}
+
+.channel-actions {
+    display: flex;
+    gap: 4px;
+}
+
+/* ═══════════════════════════
+   Modal / Dialog
+   ═══════════════════════════ */
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    /* Hidden by default — dialog[open] activates it */
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    border: none;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.modal-backdrop[open] {
+    display: flex;
+}
+
+.modal-backdrop::backdrop {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+}
+
+.modal {
+    background: #18181b;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    width: 480px;
+    max-width: 90vw;
+    max-height: 85vh;
+    overflow-y: auto;
+    color: #e4e4e7;
+}
+
+/* ═══════════════════════════
+   Utility
+   ═══════════════════════════ */
+.hidden {
+    display: none !important;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.channel-card {
+    animation: fadeIn 0.2s ease-out;
+}
+
+/* ═══════════════════════════
+   Content Management Dialog
+   ═══════════════════════════ */
+.modal-wide {
+    width: 780px;
+    max-width: 95vw;
+}
+
+.episode-title {
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 11px;
+    color: #a1a1aa;
+}
+
+.content-dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.content-dialog-header .icon-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: #a1a1aa;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+}
+
+.content-dialog-header .icon-btn:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: #e4e4e7;
+}
+
+.content-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+.content-summary {
+    font-size: 12px;
+    color: #71717a;
+    flex: 1;
+}
+
+/* ═══════════════════════════
+   Dropdown Menu
+   ═══════════════════════════ */
+.dropdown {
+    position: relative;
+    margin-left: auto;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 4px;
+    background: #27272a;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 4px;
+    min-width: 180px;
+    z-index: 50;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    animation: fadeIn 0.12s ease-out;
+}
+
+.dropdown-menu button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 8px 12px;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    color: #d4d4d8;
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.1s;
+}
+
+.dropdown-menu button:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #f4f4f5;
+}
+
+.dropdown-menu button.danger {
+    color: var(--danger);
+}
+
+.dropdown-menu button.danger:hover {
+    background: rgba(248, 113, 113, 0.12);
+}
+
+.dropdown-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 4px 0;
+}
+
+.content-list {
+    max-height: 420px;
+    overflow-y: auto;
+}
+
+/* Content File Table */
+.content-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.content-table thead th {
+    text-align: left;
+    padding: 6px 10px;
+    color: #71717a;
+    font-weight: 500;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: #18181b;
+    z-index: 1;
+}
+
+.content-table tbody td {
+    padding: 8px 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    color: #d4d4d8;
+    vertical-align: middle;
+}
+
+.content-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.content-table tbody tr.row-duplicate {
+    background: rgba(251, 191, 36, 0.06);
+}
+
+.content-table tbody tr.row-orphan {
+    background: rgba(248, 113, 113, 0.06);
+}
+
+.content-table .col-actions {
+    text-align: right;
+    white-space: nowrap;
+}
+
+/* Badges */
+.badge {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.badge-ok {
+    background: rgba(52, 211, 153, 0.12);
+    color: var(--success);
+}
+
+.badge-dup {
+    background: rgba(251, 191, 36, 0.15);
+    color: #fbbf24;
+}
+
+.badge-orphan {
+    background: rgba(248, 113, 113, 0.15);
+    color: var(--danger);
+}
+
+.file-key {
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: 'SF Mono', 'Cascadia Code', monospace;
+    font-size: 11px;
+}

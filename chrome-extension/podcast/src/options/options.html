@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>播客频道管理 — NotebookLM Agent</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./options.css">
+</head>
+
+<body class="bg-zinc-950 text-zinc-100 min-h-screen font-[Inter,sans-serif]">
+    <div id="main-container" class="max-w-3xl mx-auto px-6 py-10">
+
+        <!-- ═══ Header ═══ -->
+        <header id="page-header" class="mb-10">
+            <h1 class="text-2xl font-bold flex items-center gap-2">🎙️ 播客频道管理</h1>
+            <p class="text-zinc-500 text-sm mt-1">配置阿里云 OSS 连接 & 管理播客频道</p>
+        </header>
+
+        <!-- ═══ Aliyun OSS Config ═══ -->
+        <section id="aliyun-config-section" class="card mb-8">
+            <h2 class="card-title">☁️ 阿里云 OSS 配置</h2>
+            <form id="form-aliyun" class="grid grid-cols-2 gap-4 mt-4">
+                <div class="field">
+                    <label for="oss-region">Region</label>
+                    <input id="oss-region" type="text" placeholder="oss-cn-shanghai" required>
+                </div>
+                <div class="field">
+                    <label for="oss-bucket">Bucket</label>
+                    <input id="oss-bucket" type="text" placeholder="my-podcast-bucket" required>
+                </div>
+                <div class="field">
+                    <label for="oss-ak-id">AccessKey ID</label>
+                    <input id="oss-ak-id" type="text" placeholder="LTAI5t..." required>
+                </div>
+                <div class="field">
+                    <label for="oss-ak-secret">AccessKey Secret</label>
+                    <input id="oss-ak-secret" type="password" placeholder="••••••••" required>
+                </div>
+                <div class="field col-span-2">
+                    <label for="oss-cdn">CDN 域名</label>
+                    <input id="oss-cdn" type="url" placeholder="https://podcast.my-domain.com" required>
+                </div>
+                <div class="field col-span-2">
+                    <label for="gemini-api-key">Gemini API Key <span class="text-zinc-500">(可选，用于自动生成封面)</span></label>
+                    <input id="gemini-api-key" type="password" placeholder="AIza...">
+                </div>
+                <div class="col-span-2 flex gap-3 justify-end">
+                    <button type="button" id="btn-test-oss" class="btn btn-ghost">🔍 测试连接</button>
+                    <button type="submit" class="btn btn-primary">💾 保存配置</button>
+                </div>
+            </form>
+            <div id="oss-status" class="status-msg hidden"></div>
+        </section>
+
+        <!-- ═══ Channels ═══ -->
+        <section class="card">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="card-title mb-0">📻 播客频道</h2>
+                <button id="btn-new-channel" class="btn btn-primary btn-sm">+ 新建频道</button>
+            </div>
+
+            <div id="channel-list" class="space-y-3">
+                <div class="text-zinc-600 text-sm text-center py-8">暂无频道，点击"新建频道"开始</div>
+            </div>
+        </section>
+
+        <!-- ═══ New/Edit Channel Modal ═══ -->
+        <dialog id="channel-dialog" class="modal-backdrop">
+            <div class="modal">
+                <h3 id="dialog-title" class="text-lg font-semibold mb-4">新建频道</h3>
+                <form id="form-channel" class="space-y-4">
+                    <input type="hidden" id="ch-id">
+                    <div class="field">
+                        <label for="ch-title">频道名称</label>
+                        <input id="ch-title" type="text" placeholder="我的 AI 播客" required>
+                    </div>
+                    <div class="field">
+                        <label for="ch-desc">频道简介</label>
+                        <textarea id="ch-desc" rows="2" placeholder="对频道的简短描述..."></textarea>
+                    </div>
+                    <div class="field">
+                        <label for="ch-author">作者</label>
+                        <input id="ch-author" type="text" placeholder="你的名字" value="NotebookLM Agent">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="field">
+                            <label for="ch-lang">语言</label>
+                            <input id="ch-lang" type="text" value="zh-cn">
+                        </div>
+                        <div class="field">
+                            <label for="ch-category">iTunes 分类</label>
+                            <input id="ch-category" type="text" value="Education">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="ch-cover">封面图片</label>
+                        <div id="ch-cover-preview" class="cover-preview hidden">
+                            <img id="ch-cover-preview-img" src="" alt="当前封面">
+                            <div class="cover-preview-overlay">
+                                <span>点击下方选择新图片或重新生成</span>
+                            </div>
+                        </div>
+                        <input id="ch-cover" type="file" accept="image/jpeg,image/png" class="file-input">
+                        <p class="text-xs text-zinc-500 mt-1">推荐 1400×1400 ~ 3000×3000 正方形 JPG/PNG</p>
+                        <p class="text-xs text-zinc-600 mt-0.5">💡 未选择图片时，将保留当前封面；勾选下方可重新生成</p>
+                        <label id="ch-cover-regen-label" class="cover-regen-option hidden">
+                            <input type="checkbox" id="ch-cover-regen">
+                            <span>🎨 重新生成封面（使用 AI 根据频道名称生成）</span>
+                        </label>
+                    </div>
+                    <div class="flex gap-3 justify-end pt-2">
+                        <button type="button" id="btn-cancel-dialog" class="btn btn-ghost">取消</button>
+                        <button type="submit" class="btn btn-primary">
+                            <span id="dialog-submit-text">创建并初始化</span>
+                        </button>
+                    </div>
+                </form>
+                <div id="dialog-status" class="status-msg hidden mt-3"></div>
+            </div>
+        </dialog>
+
+    </div>
+
+    <!-- ═══ Content Management Modal ═══ -->
+    <dialog id="content-dialog" class="modal-backdrop">
+        <div class="modal modal-wide">
+            <div class="content-dialog-header">
+                <h3 id="content-dialog-title" class="text-lg font-semibold">频道内容管理</h3>
+                <button type="button" id="btn-close-content" class="icon-btn" title="关闭">✕</button>
+            </div>
+
+            <!-- Toolbar -->
+            <div class="content-toolbar">
+                <span id="content-summary" class="content-summary"></span>
+                <div class="dropdown">
+                    <button id="btn-advanced" class="btn btn-ghost btn-sm">⚙️ 高级 ▾</button>
+                    <div id="advanced-menu" class="dropdown-menu hidden">
+                        <button data-action="scan-dup">🔍 扫描重复</button>
+                        <button data-action="sync-titles">🔄 同步标题</button>
+                        <button data-action="fix-serial">🔧 修复连播</button>
+                        <button data-action="fix-rss">📥 批量补充 RSS</button>
+                        <hr class="dropdown-divider">
+                        <button data-action="delete-dups" class="danger">🗑️ 一键删除重复</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- File List -->
+            <div id="content-list" class="content-list">
+                <div class="text-zinc-600 text-sm text-center py-8">加载中...</div>
+            </div>
+
+            <!-- Status -->
+            <div id="content-status" class="status-msg hidden mt-3"></div>
+        </div>
+    </dialog>
+
+    <script type="module" src="./options.ts"></script>
+</body>
+
+</html>

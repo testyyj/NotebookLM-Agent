@@ -1,0 +1,50 @@
+{
+    "manifest_version": 3,
+    "name": "NotebookLM Agent",
+    "description": "🤖 在浏览器中操作 NotebookLM — 笔记本管理 / 数据源 / 对话 / 生成播客",
+    "version": "0.4.0",
+    "permissions": [
+        "storage",
+        "offscreen",
+        "scripting",
+        "cookies",
+        "declarativeNetRequest"
+    ],
+    "content_security_policy": {
+        "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+    },
+    "host_permissions": [
+        "https://*.google.com/*",
+        "https://*.googleusercontent.com/*",
+        "https://*.aliyuncs.com/*",
+        "https://generativelanguage.googleapis.com/*"
+    ],
+    "action": {
+        "default_icon": {
+            "16": "icons/icon16.png",
+            "48": "icons/icon48.png",
+            "128": "icons/icon128.png"
+        }
+    },
+    "background": {
+        "service_worker": "src/background.js",
+        "type": "module"
+    },
+    "options_page": "podcast/dist/src/options/options.html",
+    "content_scripts": [
+        {
+            "matches": [
+                "https://notebooklm.google.com/*"
+            ],
+            "js": [
+                "podcast/dist/content.js"
+            ],
+            "run_at": "document_idle"
+        }
+    ],
+    "icons": {
+        "16": "icons/icon16.png",
+        "48": "icons/icon48.png",
+        "128": "icons/icon128.png"
+    }
+}

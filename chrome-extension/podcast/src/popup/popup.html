@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>播客发布 — NotebookLM Agent</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./popup.css">
+</head>
+
+<body class="bg-zinc-950 text-zinc-100 font-[Inter,sans-serif]">
+    <div class="popup-container">
+
+        <!-- ═══ Header ═══ -->
+        <header class="popup-header">
+            <h1 class="text-base font-bold flex items-center gap-2">🎙️ 播客发布</h1>
+            <button id="btn-options" class="icon-btn" title="频道管理">⚙️</button>
+        </header>
+
+        <!-- ═══ No Config Warning ═══ -->
+        <div id="no-config" class="warning-banner hidden">
+            ⚠️ 请先在 <a id="link-options" href="#">选项页</a> 配置 OSS 和创建频道
+        </div>
+
+        <!-- ═══ Channel Selector ═══ -->
+        <div class="field" id="section-channel">
+            <label for="sel-channel">选择频道</label>
+            <select id="sel-channel">
+                <option value="">— 选择频道 —</option>
+            </select>
+        </div>
+
+        <!-- ═══ Auto-scraped + Editable Metadata ═══ -->
+        <div id="section-meta" class="space-y-3">
+            <div class="field">
+                <label for="ep-title">标题</label>
+                <input id="ep-title" type="text" placeholder="单集标题...">
+            </div>
+            <div class="field">
+                <label for="ep-desc">描述</label>
+                <textarea id="ep-desc" rows="3" placeholder="单集描述（可填入 AI 摘要）..."></textarea>
+            </div>
+        </div>
+
+        <!-- ═══ WAV File Input ═══ -->
+        <div class="field">
+            <label for="wav-file">WAV 音频文件</label>
+            <div class="file-drop-zone" id="drop-zone">
+                <input id="wav-file" type="file" accept="audio/wav,audio/x-wav,.wav" class="file-input-hidden">
+                <div id="drop-label" class="drop-label">
+                    <span class="drop-icon">📂</span>
+                    <span>将 .wav 文件拖到此处或 <strong>点击选择</strong></span>
+                </div>
+                <div id="file-info" class="file-info hidden">
+                    <span id="file-name" class="file-name"></span>
+                    <span id="file-size" class="file-size"></span>
+                    <button id="btn-clear-file" class="icon-btn" title="移除">✕</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══ Scrape Button ═══ -->
+        <button id="btn-scrape" class="btn btn-ghost btn-full">
+            🔍 从当前页面抓取标题和摘要
+        </button>
+
+        <!-- ═══ Publish Button ═══ -->
+        <button id="btn-publish" class="btn btn-primary btn-full" disabled>
+            🚀 转码并发布
+        </button>
+
+        <!-- ═══ Progress ═══ -->
+        <div id="progress-section" class="progress-section hidden">
+            <div class="progress-bar-track">
+                <div id="progress-bar" class="progress-bar-fill" style="width: 0%"></div>
+            </div>
+            <div id="progress-text" class="progress-text">准备中...</div>
+        </div>
+
+        <!-- ═══ Result ═══ -->
+        <div id="result-section" class="result-section hidden">
+            <div id="result-msg" class="result-msg"></div>
+        </div>
+
+    </div>
+
+    <script type="module" src="./popup.ts"></script>
+</body>
+
+</html>
