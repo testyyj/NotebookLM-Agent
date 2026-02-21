@@ -1938,7 +1938,8 @@ async function downloadArtifact(a) {
     function ppBuildSourceChips(srcList) {
         return srcList.map(s => {
             const icon = SOURCE_TYPE_ICONS[s.typeCode] || "📎";
-            return `<span class="mapping-source-chip"><span class="source-type-icon">${icon}</span>${escHtml(s.title)}</span>`;
+            const escTitle = escHtml(s.title);
+            return `<span class="mapping-source-chip" title="${escTitle}"><span class="source-type-icon">${icon}</span><span class="mapping-source-name">${escTitle}</span></span>`;
         }).join("");
     }
 

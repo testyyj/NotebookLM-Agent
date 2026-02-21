@@ -66,6 +66,20 @@
             </div>
         </section>
 
+        <!-- ═══ Backup & Restore ═══ -->
+        <section id="backup-section" class="card mb-8">
+            <h2 class="card-title">📦 数据备份与恢复</h2>
+            <p class="text-zinc-500 text-sm mb-4">导出或导入你在本地配置的所有频道、系统设置、笔记本目录分类以及数据映射关系等数据。</p>
+            <div class="flex gap-4">
+                <button type="button" id="btn-export-settings" class="btn btn-ghost flex-1 justify-center">📤 导出全部配置</button>
+                <div class="flex-1 relative">
+                    <input type="file" id="import-settings-file" accept=".json" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                    <button type="button" class="btn btn-primary w-full justify-center pointer-events-none">📥 导入配置 (覆盖本地)</button>
+                </div>
+            </div>
+            <div id="backup-status" class="status-msg hidden mt-4"></div>
+        </section>
+
         <!-- ═══ New/Edit Channel Modal ═══ -->
         <dialog id="channel-dialog" class="modal-backdrop">
             <div class="modal">

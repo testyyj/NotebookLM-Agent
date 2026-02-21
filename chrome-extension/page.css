@@ -1727,6 +1727,7 @@ body {
     flex-wrap: wrap;
     gap: 4px;
     white-space: normal;
+    max-width: 220px;
 }
 
 .mapping-sources.collapsed .mapping-source-chip:not(:first-child) {
@@ -1749,7 +1750,14 @@ body {
     color: var(--text-secondary);
     max-width: 100%;
     overflow: hidden;
+}
+
+.mapping-source-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .mapping-source-chip .source-type-icon {

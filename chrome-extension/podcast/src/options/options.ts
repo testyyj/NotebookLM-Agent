@@ -443,6 +443,16 @@ function unescapeXml(str: string): string {
         .replace(/&amp;/g, "&");  // &amp; must be last
 }
 
+function deleteArtifact(baseKey: string, extIdx: number) {
+    chrome.runtime.sendMessage({
+        type: "podcastPublish",
+        action: "deleteArtifactFile",
+        id: "", // not strictly needed
+        artifactBaseKey: baseKey,
+        extensionIndex: extIdx
+    });
+}
+
 // ═══════════════════════════════════════
 // Content Management Dialog
 // ═══════════════════════════════════════
@@ -451,10 +461,110 @@ const contentDialog = $<HTMLDialogElement>("#content-dialog");
 const contentDialogTitle = $<HTMLHeadingElement>("#content-dialog-title");
 const contentList = $<HTMLDivElement>("#content-list");
 const contentStatus = $<HTMLDivElement>("#content-status");
-const contentSummary = $<HTMLSpanElement>("#content-summary");
+const contentSummary = $<HTMLElement>("#content-summary");
 const btnCloseContent = $<HTMLButtonElement>("#btn-close-content");
 const btnAdvanced = $<HTMLButtonElement>("#btn-advanced");
 const advancedMenu = $<HTMLDivElement>("#advanced-menu");
+
+// Backup & Restore
+const backupStatus = $<HTMLDivElement>("#backup-status");
+const btnExportSettings = $<HTMLButtonElement>("#btn-export-settings");
+const importSettingsFile = $<HTMLInputElement>("#import-settings-file");
+
+function showBackupStatus(msg: string, type: "success" | "error" | "info") {
+    backupStatus.textContent = msg;
+    backupStatus.className = `status-msg msg-${type} mt-4`; // remove hidden
+    setTimeout(() => {
+        backupStatus.classList.add("hidden");
+    }, 4000);
+}
+
+btnExportSettings.addEventListener("click", async () => {
+    try {
+        btnExportSettings.disabled = true;
+        btnExportSettings.textContent = "⏳ 导出中...";
+        const allData = await chrome.storage.local.get(null);
+
+        const blob = new Blob([JSON.stringify(allData, null, 2)], { type: "application/json" });
+        const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+        const suggestedName = `notebooklm-agent-config-${dateStr}.json`;
+
+        if ('showSaveFilePicker' in window) {
+            const handle = await (window as any).showSaveFilePicker({
+                suggestedName,
+                types: [{
+                    description: 'JSON Files',
+                    accept: { 'application/json': ['.json'] },
+                }],
+            });
+            const writable = await handle.createWritable();
+            await writable.write(blob);
+            await writable.close();
+        } else {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = suggestedName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        showBackupStatus("✅ 配置导出成功", "success");
+    } catch (err: any) {
+        if (err.name !== 'AbortError') {
+            showBackupStatus(`⚠️ 导出失败: ${err.message}`, "error");
+        } else {
+            showBackupStatus("ℹ️ 已取消导出", "info");
+        }
+    } finally {
+        btnExportSettings.disabled = false;
+        btnExportSettings.textContent = "📤 导出全部配置";
+    }
+});
+
+importSettingsFile.addEventListener("change", (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+        try {
+            const jsonText = e.target?.result as string;
+            const parsedData = JSON.parse(jsonText);
+
+            if (typeof parsedData !== "object" || parsedData === null) {
+                throw new Error("无效的配置文件格式");
+            }
+
+            if (!confirm(`⚠️ 确定要导入此文件吗？\n这将会覆盖你当前本地所有的频道、目录分类设置以及其他选项。覆盖后无法撤销！`)) {
+                importSettingsFile.value = ""; // Reset input
+                return;
+            }
+
+            // Clear current storage and set new one
+            await chrome.storage.local.clear();
+            await chrome.storage.local.set(parsedData);
+
+            showBackupStatus("✅ 导入成功，正在刷新页面...", "success");
+
+            setTimeout(() => {
+                // If in an iframe, let the parent reload to refresh everything. Otherwise reload self.
+                if (window.parent && window.parent !== window) {
+                    window.parent.location.reload();
+                } else {
+                    window.location.reload();
+                }
+            }, 1000);
+
+        } catch (err: any) {
+            importSettingsFile.value = ""; // Reset input
+            showBackupStatus(`⚠️ 导入失败: ${err.message}`, "error");
+        }
+    };
+    reader.readAsText(file);
+});
 
 interface FileEntry {
     obj: OssObject;
